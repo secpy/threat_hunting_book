@@ -1,0 +1,771 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Анализа IP- и MAC-адресов с помощью модуля cyberpandas &#8212; Охотники за угрозами</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Обработка yara-правил на языке Python" href="yara.html" />
+    <link rel="prev" title="Нечеткое хеширование на Python" href="hash.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../_static/logo2.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Охотники за угрозами</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Введение
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Библиотека блокнотов
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="intro.html">
+   Примеры блокнотов
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2">
+    <a class="reference internal" href="MSTICPy.html">
+     Введение в MSTICPy
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="pe.html">
+     Обработка hashes и PE (ELF)-файлов на языке Python
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="hash.html">
+     Нечеткое хеширование на Python
+    </a>
+   </li>
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     Анализа IP- и MAC-адресов с помощью модуля cyberpandas
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="yara.html">
+     Обработка yara-правил на языке Python
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/secpy/threat_hunting_book/master?urlpath=tree/docs/examples/cyberpandas.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="../_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-repository-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Source repositories">
+      <i class="fab fa-github"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://github.com/secpy/threat_hunting_book"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="headerbtn__text-container">repository</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/secpy/threat_hunting_book/issues/new?title=Issue%20on%20page%20%2Fexamples/cyberpandas.html&body=Your%20issue%20content%20here."
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Open an issue"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="headerbtn__text-container">open issue</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../_sources/examples/cyberpandas.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Анализа IP- и MAC-адресов с помощью модуля cyberpandas</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="ip-mac-cyberpandas">
+<h1>Анализа IP- и MAC-адресов с помощью модуля cyberpandas<a class="headerlink" href="#ip-mac-cyberpandas" title="Permalink to this headline">#</a></h1>
+<p><a href="https://colab.research.google.com/github/dm-fedorov/infosec/blob/master/cyberpandas/Анализа%20IP-%20и%20MAC-адресов%20с%20помощью%20модуля%20cyberpandas.ipynb"><img align="left" src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab" title="Open and Execute in Google Colaboratory" target="_blank"></a></p>
+<p>Обычно при анализе сетевого трафика используются наборы данных, содержащие IP-адреса.</p>
+<p>В стандртном Python для этого есть:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://pyneng.readthedocs.io/ru/latest/book/12_useful_modules/ipaddress.html">Модуль ipaddress</a></p></li>
+<li><p><a class="reference external" href="https://realpython.com/python-ipaddress-module/">Learn IP Address Concepts With Python’s ipaddress Module</a></p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/howto/ipaddress.html">An introduction to the ipaddress module</a></p></li>
+</ul>
+<p>Но мы помним про объемы памяти, которые выделяет стандартный Python в момент создания объектов.</p>
+<p>Основываясь на <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.api.extensions.ExtensionArray.html"><code class="docutils literal notranslate"><span class="pre">ExtensionArray</span></code></a> интерфейсе, <a class="reference external" href="https://cyberpandas.readthedocs.io/en/latest/"><code class="docutils literal notranslate"><span class="pre">cyberpandas</span></code></a> предоставляет два новых типа данных: для IP-адреса и для MAC-адреса, совместимые с типами данных pandas.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="ch">#!pip3 install cyberpandas</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">cyberpandas</span> <span class="kn">import</span> <span class="n">IPArray</span><span class="p">,</span> <span class="n">to_ipaddress</span> 
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># создаем объекти типа IPArray</span>
+<span class="n">arr</span> <span class="o">=</span> <span class="n">IPArray</span><span class="p">([</span><span class="s1">&#39;192.168.1.1&#39;</span><span class="p">,</span>                               <span class="c1"># IP</span>
+               <span class="s1">&#39;2001:0db8:85a3:0000:0000:8a2e:0370:7334&#39;</span><span class="p">])</span>  <span class="c1"># MAC  </span>
+<span class="n">arr</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>IPArray([&#39;192.168.1.1&#39;, &#39;2001:db8:85a3::8a2e:370:7334&#39;])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">type</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>cyberpandas.ip_array.IPArray
+</pre></div>
+</div>
+</div>
+</div>
+<p>Создадим <code class="docutils literal notranslate"><span class="pre">Series</span></code> на основе массива <code class="docutils literal notranslate"><span class="pre">IPArray</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ser</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ser</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0                     192.168.1.1
+1    2001:db8:85a3::8a2e:370:7334
+dtype: ip
+</pre></div>
+</div>
+</div>
+</div>
+<p>Обратите внимание на <code class="docutils literal notranslate"><span class="pre">dtype</span></code>.</p>
+<p>Данные по-прежнему хранятся в формате <code class="docutils literal notranslate"><span class="pre">IPArray</span></code>. Это обеспечивает высокопроизводительный рабочий процесс, который будет <a class="reference external" href="https://cyberpandas.readthedocs.io/en/latest/usage.html#pandas-integration">естественным для пользователей pandas</a>.</p>
+<p>Рассмотрим пример анализа сетевого трафика:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># данные получены из wireshark -&gt; csv</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;https://raw.githubusercontent.com/dm-fedorov/infosec/master/traffic-analysis/data/processed/scan_26112020.csv&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_copy</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">df_copy</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Time</th>
+      <th>Source</th>
+      <th>Destination</th>
+      <th>Protocol</th>
+      <th>Length</th>
+      <th>Info</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1970-01-01 00:00:00.000000000</td>
+      <td>172.16.0.8</td>
+      <td>64.13.134.52</td>
+      <td>TCP</td>
+      <td>58</td>
+      <td>36050  &gt;  443 [SYN] Seq=0 Win=3072 Len=0 MSS=1460</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1970-01-01 00:00:00.001539000</td>
+      <td>172.16.0.8</td>
+      <td>64.13.134.52</td>
+      <td>TCP</td>
+      <td>58</td>
+      <td>36050  &gt;  143 [SYN] Seq=0 Win=3072 Len=0 MSS=1460</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1970-01-01 00:00:00.001597000</td>
+      <td>172.16.0.8</td>
+      <td>64.13.134.52</td>
+      <td>TCP</td>
+      <td>58</td>
+      <td>36050  &gt;  3306 [SYN] Seq=0 Win=2048 Len=0 MSS=...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1970-01-01 00:00:00.001650000</td>
+      <td>172.16.0.8</td>
+      <td>64.13.134.52</td>
+      <td>TCP</td>
+      <td>58</td>
+      <td>36050  &gt;  199 [SYN] Seq=0 Win=3072 Len=0 MSS=1460</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1970-01-01 00:00:00.001703000</td>
+      <td>172.16.0.8</td>
+      <td>64.13.134.52</td>
+      <td>TCP</td>
+      <td>58</td>
+      <td>36050  &gt;  111 [SYN] Seq=0 Win=1024 Len=0 MSS=1460</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>Посмотрим на типы данных:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_copy</span><span class="o">.</span><span class="n">dtypes</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time           object
+Source         object
+Destination    object
+Protocol       object
+Length          int64
+Info           object
+dtype: object
+</pre></div>
+</div>
+</div>
+</div>
+<p>Преобразуем столбцы <code class="docutils literal notranslate"><span class="pre">Source</span></code> и <code class="docutils literal notranslate"><span class="pre">Destination</span></code> в тип данных <code class="docutils literal notranslate"><span class="pre">IPArray</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_copy</span><span class="p">[</span><span class="s2">&quot;Source&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">IPArray</span><span class="p">(</span><span class="n">df_copy</span><span class="p">[</span><span class="s2">&quot;Source&quot;</span><span class="p">])</span>
+<span class="n">df_copy</span><span class="p">[</span><span class="s2">&quot;Destination&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">IPArray</span><span class="p">(</span><span class="n">df_copy</span><span class="p">[</span><span class="s2">&quot;Destination&quot;</span><span class="p">])</span>
+<span class="n">df_copy</span><span class="o">.</span><span class="n">dtypes</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time           object
+Source             ip
+Destination        ip
+Protocol       object
+Length          int64
+Info           object
+dtype: object
+</pre></div>
+</div>
+</div>
+</div>
+<p>Или еще один способ для преобразования в <code class="docutils literal notranslate"><span class="pre">IPArray</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_copy</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+<span class="n">df_copy</span><span class="p">[</span><span class="s2">&quot;Destination&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_ipaddress</span><span class="p">(</span><span class="n">df_copy</span><span class="p">[</span><span class="s2">&quot;Destination&quot;</span><span class="p">])</span>
+<span class="n">df_copy</span><span class="p">[</span><span class="s2">&quot;Source&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_ipaddress</span><span class="p">(</span><span class="n">df_copy</span><span class="p">[</span><span class="s2">&quot;Source&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_copy</span><span class="o">.</span><span class="n">dtypes</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time           object
+Source             ip
+Destination        ip
+Protocol       object
+Length          int64
+Info           object
+dtype: object
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_copy</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Time</th>
+      <th>Source</th>
+      <th>Destination</th>
+      <th>Protocol</th>
+      <th>Length</th>
+      <th>Info</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1970-01-01 00:00:00.000000000</td>
+      <td>172.16.0.8</td>
+      <td>64.13.134.52</td>
+      <td>TCP</td>
+      <td>58</td>
+      <td>36050  &gt;  443 [SYN] Seq=0 Win=3072 Len=0 MSS=1460</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1970-01-01 00:00:00.001539000</td>
+      <td>172.16.0.8</td>
+      <td>64.13.134.52</td>
+      <td>TCP</td>
+      <td>58</td>
+      <td>36050  &gt;  143 [SYN] Seq=0 Win=3072 Len=0 MSS=1460</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1970-01-01 00:00:00.001597000</td>
+      <td>172.16.0.8</td>
+      <td>64.13.134.52</td>
+      <td>TCP</td>
+      <td>58</td>
+      <td>36050  &gt;  3306 [SYN] Seq=0 Win=2048 Len=0 MSS=...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1970-01-01 00:00:00.001650000</td>
+      <td>172.16.0.8</td>
+      <td>64.13.134.52</td>
+      <td>TCP</td>
+      <td>58</td>
+      <td>36050  &gt;  199 [SYN] Seq=0 Win=3072 Len=0 MSS=1460</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1970-01-01 00:00:00.001703000</td>
+      <td>172.16.0.8</td>
+      <td>64.13.134.52</td>
+      <td>TCP</td>
+      <td>58</td>
+      <td>36050  &gt;  111 [SYN] Seq=0 Win=1024 Len=0 MSS=1460</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>Различные атрибуты по <a class="reference external" href="https://cyberpandas.readthedocs.io/en/latest/api.html#ip-address-attributes">ссылке</a>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_copy</span><span class="o">.</span><span class="n">Source</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">is_ipv4</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([ True,  True,  True, ...,  True,  True,  True])
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./examples"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="hash.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Нечеткое хеширование на Python</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="yara.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Обработка yara-правил на языке Python</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Dima Fedorov<br/>
+  
+      &copy; Copyright 2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>
