@@ -1,0 +1,19 @@
+# Table of contents
+# Learn more at https://jupyterbook.org/customize/toc.html
+
+format: jb-book
+root: intro
+title: Введение
+options:
+  numbered: true
+parts:
+- caption: Библиотека блокнотов
+  maxdepth: 3  # The displayed Table of Contents will only have two levels
+  chapters:
+  - file: examples/intro
+    sections:
+    - file: examples/MSTICPy
+    - file: examples/pe
+    - file: examples/hash
+    - file: examples/cyberpandas
+    - file: examples/yara
